@@ -1,0 +1,17 @@
+{
+  "name": "calculator-with-simple-backend",
+  "version": "1.0.0",
+  "description": "- [ ] A calculator app should be created in React framework  \r - [ ] The app have to use the base operations (addition, subtraction, multiplication, division)  \r - [ ] The application should support decimal point  \r - [ ] The app should have a clear button  \r - [ ] The app should have memory read and write button  \r - [ ] The app should use backend API for memory operations",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently \"cd calculator-backend && node server.js\" \"cd calculator-frontend && npm run start\"",
+    "install-frontend": "cd calculator-frontend && npm install",
+    "install-backend": "cd calculator-backend && npm install"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
