@@ -1,35 +1,20 @@
-const express = require('express')
-const app = express()
-const fs = require('fs')
-const port = 3001
-const bodyParser = require('body-parser');
+import express from "express";
+import bodyParser from "body-parser";
 
 
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+const app = express();
 
-app.get('/number', (req, res) => {
-  fs.readFile('./data/numberData.json', 'utf-8', (err, data) => {
-    if (err) throw err
-    res.send(data)
-})
-})
-
-app.post('/number', (req, res) => {
-const { number } = req.body
-
-const updateData = JSON.stringify({"storedNumber": number}) 
+const port = 3001;
+import viewController from "./controllers/view-controller.js";
 
 
- fs.writeFile('data.json', updateData, 'utf8', (err) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    console.log('JSON file has been updated.');
-  });
-})
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.get("/number", async (req, res) => viewController.getNumber(req, res));
+
+app.post("/number", async (req, res) => viewController.postNumber(req, res));
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+  console.log(`Example app listening on port ${port}`);
+});
