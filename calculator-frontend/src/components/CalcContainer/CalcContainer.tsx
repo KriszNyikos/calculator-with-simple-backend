@@ -5,8 +5,10 @@ import {
   buttons,
   convertInputValue,
   doOperation,
-} from "./CalcContainer.service";
+} from "./calc-container.service";
 import { Operation, mapOperationEnumToSign } from "../../enums/operations.enum";
+
+import { getMemorizedData, putMemorizedData } from "../../services/memory.service";
 
 export default function CalcContainer() {
   const [inputValue, setInputValue] = useState<string[]>([]);
@@ -57,6 +59,20 @@ export default function CalcContainer() {
     }
   };
 
+  // TODO move to servie
+  const handlerSaveNumber = () => {
+    getMemorizedData().then((data) => {
+      const newMemory = [...data, convertInputValue(inputValue)];
+      putMemorizedData(newMemory);
+    
+      setInputValue([]);
+      setAccumulatorValue("");
+      setSelectedOperation(undefined);
+      setSelectedOperation(undefined);
+    }).catch(console.error);
+  };
+  const handlerGetNumber = (savedNumber: string[]) => {};
+
   const doSelectedOperation = (operation: Operation) => {
     if (selectedOperation) {
       setAccumulatorValue(
@@ -83,7 +99,8 @@ export default function CalcContainer() {
         {inputValue.join("")}
       </div>
       <div className="info-field d-flex  border-end border-start border-white justify-content-end">
-        {accumulatorValue} { selectedOperation && mapOperationEnumToSign(selectedOperation)}
+        {accumulatorValue}{" "}
+        {selectedOperation && mapOperationEnumToSign(selectedOperation)}
       </div>
 
       <div className="border border-top-0 border-white d-flex justify-content-center">
@@ -98,12 +115,17 @@ export default function CalcContainer() {
         </div>
 
         <div className="d-flex flex-column justify-content-between ">
-        { 
-          Object.keys(Operation).map(key => {
-            return <div onClick={() => handlerChangeOperation(key as Operation)}> {mapOperationEnumToSign(key as Operation)} </div>
-          })
-        }
-        
+          {Object.keys(Operation).map((key) => {
+            return (
+              <div onClick={() => handlerChangeOperation(key as Operation)}>
+                {mapOperationEnumToSign(key as Operation)}
+              </div>
+            );
+          })}
+
+          <div onClick={() => handlerSaveNumber()}> M + </div>
+          <div onClick={() => handlerGetNumber(inputValue)}> M - </div>
+
           <div onClick={resetCalculator}>AC</div>
         </div>
       </div>
