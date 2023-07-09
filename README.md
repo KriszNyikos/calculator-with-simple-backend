@@ -3,10 +3,10 @@
 ## Features
 
 ### - Frontend 
-- [ ] A calculator app should be created in React framework  
-- [ ] The app have to use the base operations (addition, subtraction, multiplication, division)  
-- [ ] The application should support decimal point  
-- [ ] The app should have a clear button  
+- [x] A calculator app should be created in React framework  
+- [x] The app have to use the base operations (addition, subtraction, multiplication, division)  
+- [x] The application should support decimal point  
+- [x] The app should have a clear button  
 - [ ] The app should have memory read and write button  
 - [ ] The app should use backend API for memory operations
 
