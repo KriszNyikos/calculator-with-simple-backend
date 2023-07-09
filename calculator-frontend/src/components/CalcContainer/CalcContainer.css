@@ -1,0 +1,21 @@
+.calc-container{
+    width: 400px;
+
+}
+
+.button-grid{
+    display: grid;
+    grid-template-columns: auto auto auto;
+}
+
+.number-field{
+    background-color: rgb(22, 22, 22);
+}
+
+.info-field, .number-field{
+    height: 25px;
+}
+
+.button-container{
+    
+}
