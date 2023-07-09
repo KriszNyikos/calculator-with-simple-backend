@@ -1,14 +1,12 @@
 import React, { ReactNode, useEffect } from "react";
 import { useState } from "react";
 import "./CalcContainer.css";
-
-enum Operation {
-  ADD = "ADD",
-  SUBTRACT = "SUBTRACT",
-  MULTIPLY = "MULTIPLY",
-  DIVIDE = "DIVIDE",
-  SHOWVALUE = "SHOWVALUE",
-}
+import {
+  buttons,
+  convertInputValue,
+  doOperation,
+} from "./CalcContainer.service";
+import { Operation, mapOperationEnumToSign } from "../../enums/operations.enum";
 
 export default function CalcContainer() {
   const [inputValue, setInputValue] = useState<string[]>([]);
@@ -42,24 +40,6 @@ export default function CalcContainer() {
     }
   }, [inputValue]);
 
-  const buttons: string[] = [
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    ".",
-    "0",
-  ];
-
-  const convertInputValue = (): number => {
-    return parseFloat(inputValue.join(""));
-  };
-
   const handleInputChange = (newNumberValue: string) => {
     setInputValue([...inputValue, newNumberValue]);
   };
@@ -71,34 +51,17 @@ export default function CalcContainer() {
 
     if (selectedOperation === undefined) {
       setSelectedOperation(operation);
-      setAccumulatorValue(convertInputValue().toString());
+      setAccumulatorValue(convertInputValue(inputValue).toString());
     } else {
       doSelectedOperation(operation);
     }
   };
 
   const doSelectedOperation = (operation: Operation) => {
-    switch (selectedOperation) {
-      case Operation.ADD:
-        setAccumulatorValue(
-          (parseFloat(accumulatorValue) + convertInputValue()).toString()
-        );
-        break;
-      case Operation.SUBTRACT:
-        setAccumulatorValue(
-          (parseFloat(accumulatorValue) - convertInputValue()).toString()
-        );
-        break;
-      case Operation.MULTIPLY:
-        setAccumulatorValue(
-          (parseFloat(accumulatorValue) * convertInputValue()).toString()
-        );
-        break;
-      case Operation.DIVIDE:
-        setAccumulatorValue(
-          (parseFloat(accumulatorValue) / convertInputValue()).toString()
-        );
-        break;
+    if (selectedOperation) {
+      setAccumulatorValue(
+        doOperation(selectedOperation, accumulatorValue, inputValue)
+      );
     }
 
     if (operation === Operation.SHOWVALUE) {
@@ -117,10 +80,10 @@ export default function CalcContainer() {
   return (
     <div className="calc-container d-flex flex-column justify-content-center">
       <div className="number-field d-flex justify-content-end rounded-top">
-       {inputValue.join("")}
+        {inputValue.join("")}
       </div>
       <div className="info-field d-flex  border-end border-start border-white justify-content-end">
-        {accumulatorValue} {selectedOperation}
+        {accumulatorValue} { selectedOperation && mapOperationEnumToSign(selectedOperation)}
       </div>
 
       <div className="border border-top-0 border-white d-flex justify-content-center">
@@ -135,23 +98,12 @@ export default function CalcContainer() {
         </div>
 
         <div className="d-flex flex-column justify-content-between ">
-          <div onClick={() => handlerChangeOperation(Operation.ADD)}> + </div>
-          <div onClick={() => handlerChangeOperation(Operation.SUBTRACT)}>
-            {" "}
-            -{" "}
-          </div>
-          <div onClick={() => handlerChangeOperation(Operation.MULTIPLY)}>
-            {" "}
-            *{" "}
-          </div>
-          <div onClick={() => handlerChangeOperation(Operation.DIVIDE)}>
-            {" "}
-            /{" "}
-          </div>
-          <div onClick={() => handlerChangeOperation(Operation.SHOWVALUE)}>
-            {" "}
-            ={" "}
-          </div>
+        { 
+          Object.keys(Operation).map(key => {
+            return <div onClick={() => handlerChangeOperation(key as Operation)}> {mapOperationEnumToSign(key as Operation)} </div>
+          })
+        }
+        
           <div onClick={resetCalculator}>AC</div>
         </div>
       </div>
