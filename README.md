@@ -7,8 +7,8 @@
 - [x] The app have to use the base operations (addition, subtraction, multiplication, division)  
 - [x] The application should support decimal point  
 - [x] The app should have a clear button  
-- [ ] The app should have memory read and write button  
-- [ ] The app should use backend API for memory operations
+- [x] The app should have memory read and write button  
+- [x] The app should use backend API for memory operations
 
 ### - Backend
 - [x] Backend should use Node.js and Express

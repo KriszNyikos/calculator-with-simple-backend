@@ -13,5 +13,13 @@
 }
 
 .info-field, .number-field{
-    height: 25px;
+    height: 50px;
+}
+
+.operator-button-column{
+    width: 45px;
+}
+
+.cursor-pointer{
+    cursor: pointer;
 }

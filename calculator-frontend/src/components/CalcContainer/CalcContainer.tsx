@@ -8,7 +8,10 @@ import {
 } from "./calc-container.service";
 import { Operation, mapOperationEnumToSign } from "../../enums/operations.enum";
 
-import { getMemorizedData, putMemorizedData } from "../../services/memory.service";
+import {
+  getMemorizedData,
+  putMemorizedData,
+} from "../../services/memory.service";
 
 export default function CalcContainer() {
   const [inputValue, setInputValue] = useState<string[]>([]);
@@ -29,20 +32,15 @@ export default function CalcContainer() {
     }
   }, [selectedOperation, accumulatorValue]);
 
-  useEffect(() => {
-    const isMultipleDecimal = inputValue.reduce((acc, curr) => {
-      if (curr === ".") {
-        return acc + 1;
-      }
-      return acc;
-    }, 0);
-
-    if (isMultipleDecimal > 1) {
-      setInputValue(inputValue.slice(0, -1));
-    }
-  }, [inputValue]);
-
   const handleInputChange = (newNumberValue: string) => {
+    if (inputValue.includes(".") && newNumberValue === ".") {
+      return;
+    }
+
+    if (newNumberValue === "0" && inputValue.length === 0) {
+      return;
+    }
+
     setInputValue([...inputValue, newNumberValue]);
   };
 
@@ -59,31 +57,32 @@ export default function CalcContainer() {
     }
   };
 
-  // TODO move to servie
   const handlerSaveNumber = () => {
-    getMemorizedData().then((data) => {
-      const newMemory = [...data, convertInputValue(inputValue)];
-      putMemorizedData(newMemory);
-    
-      setInputValue([]);
-      setAccumulatorValue("");
-      setSelectedOperation(undefined);
-      setSelectedOperation(undefined);
-    }).catch(console.error);
+    getMemorizedData()
+      .then((data) => {
+        setInputValue(data.storedNumber.split(""));
+      })
+      .catch(console.error);
   };
-  const handlerGetNumber = (savedNumber: string[]) => {};
+  const handlerGetNumber = (savedNumber: string[]) => {
+    putMemorizedData(savedNumber.join(""))
+      .then(() => {
+        alert("Number saved");
+      })
+      .catch(console.error);
+  };
 
-  const doSelectedOperation = (operation: Operation) => {
+  const doSelectedOperation = (clickedOperation: Operation) => {
     if (selectedOperation) {
       setAccumulatorValue(
         doOperation(selectedOperation, accumulatorValue, inputValue)
       );
     }
 
-    if (operation === Operation.SHOWVALUE) {
+    if (clickedOperation === Operation.SHOWVALUE) {
       setSelectedOperation(undefined);
     } else {
-      setSelectedOperation(operation);
+      setSelectedOperation(clickedOperation);
     }
   };
 
@@ -93,40 +92,81 @@ export default function CalcContainer() {
     setSelectedOperation(undefined);
   };
 
+  const removeLastNumber = () => {
+    if (inputValue.length === 0) {
+      return;
+    }
+
+    setInputValue(inputValue.slice(0, -1));
+  }
+
   return (
-    <div className="calc-container d-flex flex-column justify-content-center">
-      <div className="number-field d-flex justify-content-end rounded-top">
+    <div className="calc-container shadow d-flex flex-column justify-content-center">
+      <div className="number-field d-flex justify-content-end rounded-top p-1 align-items-center fs-2 border border-bottom-0 border-white">
         {inputValue.join("")}
       </div>
-      <div className="info-field d-flex  border-end border-start border-white justify-content-end">
-        {accumulatorValue}{" "}
+      <div className="info-field d-flex  border-end border-start border-white p-1 align-items-center justify-content-end fs-2">
         {selectedOperation && mapOperationEnumToSign(selectedOperation)}
+        {' '}
+        {accumulatorValue}
       </div>
 
       <div className="border border-top-0 border-white d-flex justify-content-center">
-        <div className="button-grid flex-grow-1">
+        <div className="button-grid flex-grow-1 ">
           {buttons.map<ReactNode>((buttonNumber: string, key): ReactNode => {
             return (
-              <div key={key} onClick={() => handleInputChange(buttonNumber)}>
+              <div
+                key={key}
+                onClick={() => handleInputChange(buttonNumber)}
+                className="cursor-pointer border border-primary text-center d-flex align-items-center justify-content-center fs-3"
+              >
                 {buttonNumber}
               </div>
             );
           })}
         </div>
 
-        <div className="d-flex flex-column justify-content-between ">
-          {Object.keys(Operation).map((key) => {
+        <div className="operator-button-column d-flex flex-column justify-content-between fs-3">
+          {Object.keys(Operation).map((key, index) => {
             return (
-              <div onClick={() => handlerChangeOperation(key as Operation)}>
+              <div
+                key={index}
+                onClick={() => handlerChangeOperation(key as Operation)}
+                className="text-center border border-warning cursor-pointer"
+              >
                 {mapOperationEnumToSign(key as Operation)}
               </div>
             );
           })}
 
-          <div onClick={() => handlerSaveNumber()}> M + </div>
-          <div onClick={() => handlerGetNumber(inputValue)}> M - </div>
+          <div
+            onClick={() => handlerGetNumber(inputValue) }
+            className="text-center border border-warning cursor-pointer"
+          >
+            {" "}
+            M+{" "}
+          </div>
+          <div
+            onClick={() => handlerSaveNumber()}
+            className="text-center border border-warning cursor-pointer"
+          >
+            {" "}
+            M-{" "}
+          </div>
 
-          <div onClick={resetCalculator}>AC</div>
+          <div
+            onClick={resetCalculator}
+            className="text-center border border-warning cursor-pointer"
+          >
+            AC
+          </div>
+
+          <div
+            onClick={removeLastNumber}
+            className="text-center border border-warning cursor-pointer"
+          >
+            C
+          </div>
         </div>
       </div>
     </div>
