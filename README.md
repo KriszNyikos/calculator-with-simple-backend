@@ -17,6 +17,9 @@
     - One for returning the stored number (GET) ("/number")
 - [x] Backend should store a number in a file (I choosed JSON)
 
+
+![image](https://github.com/KriszNyikos/calculator-with-simple-backend/assets/53120962/66e89bee-9165-4751-8016-d3024322faf8)
+
 Exra question: 
 How could I change the code for a scalable backend solution that serves 1000 users with multiple servers?
 
